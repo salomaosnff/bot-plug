@@ -1,6 +1,7 @@
 import { launch, Page, Browser } from 'puppeteer-core'
 import { resolve } from 'path'
 import { readFileSync } from 'fs';
+import { url } from './config.json'
 
 let browser: Browser;
 
@@ -9,6 +10,7 @@ async function main () {
     executablePath: '/usr/bin/brave',
     userDataDir: './.data',
     args: ['--disable-features=InfiniteSessionRestore'],
+    headless: false,
     defaultViewport: {
       isMobile: false,
       width: 1280,
@@ -35,9 +37,9 @@ async function restart (tab: Page) {
 }
 
 async function init (tab: Page) {
-  console.log('Abrindo plug.dj/indiesponível')
+  console.log(`Abrindo ${url}`)
   
-  await tab.goto('https://plug.dj/indiesponível')
+  await tab.goto(url)
   console.log('Aguardando carregamento...')
   
   await tab.waitForSelector('#audience-canvas', { timeout: 60000 }).catch(async (err) => {

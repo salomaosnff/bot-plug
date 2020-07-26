@@ -1,12 +1,11 @@
 import { Game } from "../game";
 import { BlackList } from "../../../lib/Blacklist";
-import { Bot } from "../../../lib/Bot";
 import { PlugMessage } from "../../../lib/PlugAPI";
 
 export class FrutasGame extends Game {
-  name = 'Frutas'
+  name = ['frutas', 'slots']
   descritpion = 'Digite !frutas, se sairem 3 frutas iguais você ganha o primeiro lugar da fila.'
-  command = /^frutas/i;
+  command = /^(?:frutas|slots)/i;
 
   private readonly frutas = ['🍍', '🍌', '🍒', '🍎', '🍉', '🍓', '🍐', '🍊', '🍇'];
   private readonly blacklist = new BlackList<string>(60000)
@@ -24,13 +23,13 @@ export class FrutasGame extends Game {
   }
 
   handle (arg:RegExpMatchArray, message: PlugMessage) {
+    
     const username = message.un;
+    
+    if (this.bot.checkDJ(username)) return;
+    if (this.checkBlackList(username)) return;
 
-    if (this.checkBlackList(username)) {
-      return;
-    }
-
-    const slots = new Array(3).fill(null).map(() => this.frutas[Math.floor(Math.random() * this.frutas.length)]);
+    const slots = new Array(3).fill(null).map(() => this.bot.random(this.frutas));
     const set = new Set(slots);
 
     this.blacklist.add(username)

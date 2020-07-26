@@ -70,8 +70,12 @@ export class Bot {
     return window.API.getDJ()
   }
 
-  getUser(username?: string) {
-    return window.API.getUser(username)
+  getUser(userId?: string) {
+    return window.API.getUser(userId)
+  }
+
+  getUserByName(username:string) {
+    return window.API.getUsers().find(u => u.username === username)
   }
 
   getMedia (): PlugMedia {
@@ -82,8 +86,22 @@ export class Bot {
     return window.API.getWaitList()
   }
 
+  getStaff () {
+    return window.API.getStaff()
+  }
+
   userIsInWaitList(username: string) {
     return this.getWaitList().some(u => u.username === username)
+  }
+
+  mute (username: string, duration: string = 's') {
+    window.API.moderateMuteUser(this.getUserByName(username).id, 1, duration)
+    return this;
+  }
+
+  unmute (username: string) {
+    window.API.moderateUnmuteUser(this.getUserByName(username).id)
+    return this;
   }
 
   moveDj(username: string, position: number) {
@@ -97,6 +115,36 @@ export class Bot {
     return false
   }
 
+  random<T>(items: T[]): T {
+    return items[Math.floor(Math.random() * items.length)]
+  }
+
+  getUsers () {
+    return window.API.getUsers()
+  }
+  
+  checkStaff (username: string) {
+    const staffs = this.getStaff()
+    
+    if (staffs.some(s => s.username === username)) {
+      return true
+    }
+    
+    this.sendMessageTo(username, 'Você não tem permissão para isso.')
+    return false
+  }
+
+  checkDJ (username: string) {
+    const dj = this.getDj();
+
+    if (dj.username === username) {
+      this.sendMessageTo(username, 'Você não pode fazer isso pois você está tocando.');
+      return true
+    }
+
+    return false
+  }
+
   async init() {
     this.btn_like = document.querySelector('.btn-like') as HTMLButtonElement;
 
@@ -105,13 +153,13 @@ export class Bot {
     this.on(EVENTS.CHAT, (message: PlugMessage) => {
       const match = message.message.match(/^\!([\s\S]+)\b/)
 
-      if (message.un === this.getUser().username) {
+      if (message.un === this.getUser().username || match) {
         this.markedToDelete
-          .add(message.cid, 30000, () => this.deleteMessage(message.cid))
+          .add(message.cid, 60000, () => this.deleteMessage(message.cid))
       }
       
       if (!match) {
-        if (message.message.includes(window.API.getUser().username)) {
+        if (message.message.includes(window.API.getUser().username) && message.un !== this.getUser().username) {
           return this.sendMessageTo(message.un, 'Homi, num fale comigo não... Eu sou um bot! >:(');
         }
         return

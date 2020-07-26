@@ -3,7 +3,7 @@ import { BotCommand } from "../../lib/Command";
 import { PlugMessage } from "../../lib/PlugAPI";
 
 export abstract class Game implements BotCommand {
-  public abstract name: string;
+  public abstract name: string | string[];
   public abstract command: RegExp;
   public abstract descritpion: string;
   public bot: Bot;

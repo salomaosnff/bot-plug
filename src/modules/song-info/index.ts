@@ -67,8 +67,9 @@ export class SongInfoModule extends BotModule {
   }
 
   limiteTempo(stat: AdvancePayload) {
+    clearTimeout(this.autoSkipTimer)
     if (stat.media.duration > this.options.maxDuration) {
-      this.bot.sendMessageTo(stat.dj.username, `Meu chapa, esta música ultrapassa o tempo máximo de ${this.options.maxDuration} segundos, após esse tempo eu vou ter que pular. Beleza?`)
+      this.bot.sendMessageTo(stat.dj.username, `Meu chapa, esta música ultrapassa o tempo máximo de ${this.options.maxDuration / 60} minutos, após esse tempo eu vou ter que pular. Beleza?`)
       this.autoSkipTimer = setTimeout(() => this.bot.skip(), this.options.maxDuration * 1000)
     }
   }

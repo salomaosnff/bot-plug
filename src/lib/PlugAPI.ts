@@ -102,7 +102,7 @@ declare global {
       getTimeElapsed(): any;
       getTimeRemaining(): any;
       getUser(username?: string): PlugUser;
-      getUsers(): any;
+      getUsers(): PlugUser[];
       getVolume(): any;
       getWaitList(): PlugUser[];
       getWaitListPosition(): any;

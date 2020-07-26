@@ -6,9 +6,9 @@ interface RoletaOptions {
 }
 
 export class RoletaGame extends Game {
-  name = 'Roleta'
+  name = ['roleta', 'roulette']
   descritpion = 'Quando a roleta iniciar, digite !entrar para entrar na roleta, se você for sorteado você ganha o primeiro lugar na fila.'
-  command = /^roleta/i;
+  command = /^(?:roleta|roulette)/i;
   
   public started = false;
   private users = new Set<string>();
@@ -47,7 +47,9 @@ export class RoletaGame extends Game {
     })
   }
 
-  handle () {
+  handle (_, m) {
+    if (!this.bot.checkStaff(m.un)) return;
+    if (this.bot.getWaitList().length < 2) return;
     this.start()
   }
 
@@ -92,7 +94,7 @@ export class RoletaGame extends Game {
     if (!this.users.size) return this.bot.sendMessage(`Ninguém ganhou a roleta pois não houve participantes.`)
     
     const users = [...this.users];
-    const user = users[Math.floor(Math.random() * users.length)];
+    const user = this.bot.random(users)
     
     this.bot.sendMessage(`@${user} ganhou a roleta, e será movido para a primeira posição. :D`)
     this.bot.moveDj(user, 1)

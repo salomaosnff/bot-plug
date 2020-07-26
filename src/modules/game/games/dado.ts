@@ -1,13 +1,12 @@
 import { Game } from "../game";
 import { BlackList } from "../../../lib/Blacklist";
-import { Bot } from "../../../lib/Bot";
 import { PlugMessage } from "../../../lib/PlugAPI";
 
 export class DadoGame extends Game {
-  name = 'Dado'
+  name = ['dado', 'dice']
   descritpion = 'Digite !dado <numero> se você acertar o número sorteado você ganha o primeiro lugar da fila.'
 
-  public readonly command = /^dados?/;
+  public readonly command = /^(?:dados?|dice)\s*(.*)?/i;
   private readonly blacklist = new BlackList<string>(60000)
 
   checkBlackList (username: string) {
@@ -22,18 +21,19 @@ export class DadoGame extends Game {
     return false
   }
 
-  handle(arg: RegExpMatchArray, message: PlugMessage) {
+  handle([_, num], message: PlugMessage) {
     const username = message.un
 
+    if (this.bot.checkDJ(username)) return;
     if(this.checkBlackList(username)) return;
 
-    const numero = Number(arg);
+    const numero = Number(num);
     
     if (Number.isNaN(numero) || numero < 1 || numero > 6) {
       return this.bot.sendMessageTo(username, 'Você deve escolher um número de 1 à 6.')
     }
 
-    const result = Math.round(Math.random() * 6);
+    const result = Math.ceil(Math.random() * 6);
 
     this.blacklist.add(username)
 

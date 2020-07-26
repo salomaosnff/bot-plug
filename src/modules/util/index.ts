@@ -50,8 +50,11 @@ export class UtilModule extends BotModule {
   }
 
   private comandos (username:string) {
-    const commands = [...this.bot.commands].map(c =>Array.isArray(c.name) ? `[${c.name.join(', ')}]` : c.name).join(', ')
+    const commands = [...this.bot.commands].map(c =>Array.isArray(c.name) ? c.name[0] : c.name).join(', ')
     this.bot.sendMessageTo(username, commands)
+    setTimeout(() => {
+      this.bot.sendMessageTo(username, `Dica: Digite !ajuda <comando> para obter ajuda para um comando específico.`)
+    }, 3000)
   }
 
   private ajuda (comando:string, username:string) {

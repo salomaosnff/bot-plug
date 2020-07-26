@@ -8,7 +8,8 @@
     "puppeteer-core": "^5.2.1"
   },
   "scripts": {
-    "dev": "parcel src/index.ts"
+    "dev": "parcel src/index.ts",
+    "bot": "parcel build src/index.ts && ts-node ."
   },
   "devDependencies": {
     "@types/node": "^14.0.25",

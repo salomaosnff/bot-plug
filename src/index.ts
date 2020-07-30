@@ -26,3 +26,5 @@ const bot = new Bot()
 
 // @ts-ignore
 window.bot = bot;
+
+bot.init()

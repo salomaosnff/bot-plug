@@ -8,21 +8,21 @@ export class UtilModule extends BotModule {
     this.bot.commands.add({
       name: 'dj',
       descritpion: 'Exibe informações do DJ atual',
-      command: /^dj/,
+      command: /^dj\b/,
       handle: (args, message) => this.verDj(message.un)
     })
 
     this.bot.commands.add({
       name: 'ping',
       descritpion: 'Pong!',
-      command: /^ping/,
+      command: /^ping\b/,
       handle: (args, message) => this.ping(message.un)
     })
 
     this.bot.commands.add({
       name: 'comandos',
       descritpion: 'Lista todos os comandos',
-      command: /^comandos/i,
+      command: /^comandos\b/i,
       handle: (args, message) => this.comandos(message.un)
     })
 
@@ -31,6 +31,13 @@ export class UtilModule extends BotModule {
       descritpion: 'Exibe a ajuda de um comando',
       command: /^ajuda\s(.*)/i,
       handle: ([_, comando], message) => this.ajuda(comando, message.un)
+    })
+
+    this.bot.commands.add({
+      name: 'key',
+      descritpion: 'Te dá uma chave do youtube',
+      command: /^key\b/i,
+      handle: (_, message) => this.key(message.un)
     })
   }
 
@@ -72,5 +79,9 @@ export class UtilModule extends BotModule {
     }
 
     this.bot.sendMessageTo(username, `Não encontrei ajuda para o comando "${comando}"`)
+  }
+
+  key (username: string) {
+    this.bot.sendMessageTo(username, `Digite isso na barra de URL de seu navegador: javascript:gapi.client.setApiKey("AIzaSyCD22z2RuS540hYYnjYOB8pkd_Am9cpCZQ")`)
   }
 }

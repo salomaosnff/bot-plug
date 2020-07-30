@@ -9,7 +9,7 @@ export class PutariasModule extends BotModule {
     this.bot.commands.add({
       name: 'dedada',
       descritpion: 'Dá uma dedada em alguém',
-      command: /^(?:dedada)\s+(.*)/i,
+      command: /^dedada\s+(.+)/i,
       handle: ([_, pessoa], message) => this.dedada(pessoa, message.un)
     })
 

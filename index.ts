@@ -1,16 +1,16 @@
 import { launch, Page, Browser } from 'puppeteer-core'
 import { resolve } from 'path'
 import { readFileSync } from 'fs';
-import { url } from './config.json'
+import { url, browser as browserPath } from './config.json'
 
 let browser: Browser;
 
 async function main () {
   browser = await launch({
-    executablePath: '/usr/bin/brave',
+    executablePath: browserPath,
     userDataDir: './.data',
     args: ['--disable-features=InfiniteSessionRestore'],
-    headless: false,
+    headless: true,
     defaultViewport: {
       isMobile: false,
       width: 1280,
@@ -20,10 +20,7 @@ async function main () {
 
   process.on('exit', () => browser.close())
 
-  const pages = await browser.pages()
-  const tab = pages[0]
-
-  pages.slice(1).forEach(t => t.close())
+  const [tab] = await browser.pages()
   
   init(tab)
 }
@@ -51,8 +48,6 @@ async function init (tab: Page) {
   console.log('Iniciando bot...')
   tab.on('console', consoleObj => console.log(consoleObj.text()));
   await tab.addScriptTag({ content: readFileSync(resolve(__dirname, 'dist/index.js'), 'utf-8') })
-
-  await tab.evaluate('bot.init()')
 }
 
 main()

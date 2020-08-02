@@ -10,11 +10,11 @@ export class Bot {
   public readonly commands = new Set<BotCommand>();
   public readonly modules = new Set<BotModule>();
 
-  private markedToDelete = new BlackList<number>();
+  public readonly markedToDelete = new BlackList<number>(60000, (cid) => this.deleteMessage(cid));
 
   private btn_like: HTMLButtonElement;
 
-  get lastPosition () {
+  get lastPosition() {
     return window.API.getWaitList().length;
   }
 
@@ -24,16 +24,16 @@ export class Bot {
     }
 
     module.bot = this
-    
+
     this.modules.add(module);
 
     module.onRegister()
-    
+
     return this
   }
 
   private commandListener(cmd: string, message: PlugMessage = null) {
-    
+
     for (const command of this.commands) {
       const match = cmd.match(command.command)
 
@@ -45,7 +45,7 @@ export class Bot {
 
     return this.sendMessageTo(message.un, 'Não conheço este comando...')
   }
-  
+
   async initDatabase() {
     this.db.transaction(async (runner) => {
       console.log('TRANSACAO', runner)
@@ -61,7 +61,7 @@ export class Bot {
     })
   }
 
-  skip () {
+  skip() {
     window.API.moderateForceSkip()
     return this
   }
@@ -74,19 +74,19 @@ export class Bot {
     return window.API.getUser(userId)
   }
 
-  getUserByName(username:string) {
+  getUserByName(username: string) {
     return window.API.getUsers().find(u => u.username === username)
   }
 
-  getMedia (): PlugMedia {
+  getMedia(): PlugMedia {
     return window.API.getMedia();
   }
 
-  getWaitList () {
+  getWaitList() {
     return window.API.getWaitList()
   }
 
-  getStaff () {
+  getStaff() {
     return window.API.getStaff()
   }
 
@@ -94,24 +94,24 @@ export class Bot {
     return this.getWaitList().some(u => u.username === username)
   }
 
-  mute (username: string, duration: string = 's') {
+  mute(username: string, duration: string = 's') {
     window.API.moderateMuteUser(this.getUserByName(username).id, 1, duration)
     return this;
   }
 
-  unmute (username: string) {
+  unmute(username: string) {
     window.API.moderateUnmuteUser(this.getUserByName(username).id)
     return this;
   }
 
   moveDj(username: string, position: number) {
     const user = window.API.getWaitList().find(u => u.username === username)
-    
+
     if (user) {
       window.API.moderateMoveDJ(user.id, position)
       return true
     }
-    
+
     return false
   }
 
@@ -119,22 +119,22 @@ export class Bot {
     return items[Math.floor(Math.random() * items.length)]
   }
 
-  getUsers () {
+  getUsers() {
     return window.API.getUsers()
   }
-  
-  checkStaff (username: string) {
+
+  checkStaff(username: string) {
     const staffs = this.getStaff()
-    
+
     if (staffs.some(s => s.username === username)) {
       return true
     }
-    
+
     this.sendMessageTo(username, 'Você não tem permissão para isso.')
     return false
   }
 
-  checkDJ (username: string) {
+  checkDJ(username: string) {
     const dj = this.getDj();
 
     if (dj.username === username) {
@@ -154,20 +154,14 @@ export class Bot {
       const match = message.message.match(/^\!([\s\S]+)\b/)
 
       if (message.un === this.getUser().username || match) {
-        this.markedToDelete
-          .add(message.cid, 60000, () => this.deleteMessage(message.cid))
+        this.markedToDelete.add(message.cid)
       }
-      
-      if (!match) {
-        if (message.message.includes(window.API.getUser().username) && message.un !== this.getUser().username) {
-          return this.sendMessageTo(message.un, 'Homi, num fale comigo não... Eu sou um bot! >:(');
-        }
-        return
-      }
-      
+
+      if (!match) return;
+
       this.commandListener(match[1], message)
     })
-    
+
     for (const module of this.modules) {
       module.onInit()
     }
@@ -178,12 +172,12 @@ export class Bot {
     return this
   }
 
-  join () {
+  join() {
     window.API.djJoin()
     return this
   }
 
-  sendMessage (message: string) {
+  sendMessage(message: string) {
     window.API.sendChat(message)
     return this;
   }
@@ -202,7 +196,7 @@ export class Bot {
     return this
   }
 
-  like () {
+  like() {
     this.btn_like.click();
     return this
   }

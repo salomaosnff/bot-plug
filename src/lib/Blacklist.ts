@@ -8,7 +8,7 @@ export class BlackList<T> {
   private readonly items = new Map<T, number>();
   private readonly listeners = new Map<T, BlackListListener<T>>();
 
-  constructor (public defaultTime = 1000) {
+  constructor (public defaultTime = 1000, public defaultListener: BlackListListener<T> = () => {}) {
     BlackList.instances.add(this)
   }
 
@@ -26,6 +26,7 @@ export class BlackList<T> {
         const listener = this.listeners.get(item)
         map.delete(item)
         listener(item)
+        this.listeners.delete(item)
       }
     })
 
@@ -38,7 +39,7 @@ export class BlackList<T> {
     return this
   }
 
-  add (item: T, time = this.defaultTime, listener?: BlackListListener<T>) {
+  add (item: T, time = this.defaultTime, listener = this.defaultListener) {
     this.checkDisposed();
     this.items.set(item, Date.now() + time)
     

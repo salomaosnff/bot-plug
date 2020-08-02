@@ -1,4 +1,5 @@
 {
   "browser": "/usr/bin/brave",
-  "url": "https://plug.dj/indiesponível"
+  "url": "https://plug.dj/bregadeiro",
+  "headless": false
 }

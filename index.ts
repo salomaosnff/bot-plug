@@ -1,7 +1,7 @@
 import { launch, Page, Browser } from 'puppeteer-core'
-import { resolve } from 'path'
-import { readFileSync } from 'fs';
-import { url, browser as browserPath } from './config.json'
+import { resolve, join } from 'path'
+import { readFileSync, writeFileSync } from 'fs';
+import { url, browser as browserPath, headless } from './config.json'
 
 let browser: Browser;
 
@@ -9,28 +9,23 @@ async function main () {
   browser = await launch({
     executablePath: browserPath,
     userDataDir: './.data',
-    args: ['--disable-features=InfiniteSessionRestore'],
-    headless: true,
-    defaultViewport: {
-      isMobile: false,
-      width: 1280,
-      height: 600
-    }
+    headless: headless,
+    defaultViewport: null
   })
 
   process.on('exit', () => browser.close())
-
-  const [tab] = await browser.pages()
   
-  init(tab)
+  restart()
 }
 
-async function restart (tab: Page) {
-  console.debug('Reiniciando...')
-  tab.close()
-  init(await browser.newPage())
-  const pages = await browser.pages()
-  pages.slice(1).forEach(t => t.close())
+async function restart () {
+  const [tab, ...pages] = await browser.pages()
+
+  for (const page of pages) {
+    await page.close()
+  }
+  
+  init(tab)
 }
 
 async function init (tab: Page) {
@@ -40,13 +35,15 @@ async function init (tab: Page) {
   console.log('Aguardando carregamento...')
   
   await tab.waitForSelector('#audience-canvas', { timeout: 60000 }).catch(async (err) => {
-    restart(tab)
+    restart()
     throw err
   })
   await tab.waitFor(3000)
 
   console.log('Iniciando bot...')
   tab.on('console', consoleObj => console.log(consoleObj.text()));
+  
+  await tab.exposeFunction('dump', (data) => writeFileSync(join(__dirname, 'src/modules/chatbot/chat.json'), JSON.stringify(data)))
   await tab.addScriptTag({ content: readFileSync(resolve(__dirname, 'dist/index.js'), 'utf-8') })
 }
 

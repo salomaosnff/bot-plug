@@ -1,0 +1,31 @@
+{
+  "input": {
+    "eae": ["eae", "eai"],
+    "saudacao": ["eae", "oi", "ola", "opa"],
+    "despedida": [
+      "tchau",
+      "xau",
+      "até mais",
+      "até amanhã",
+      "vou sair",
+      "tenho que sair"
+    ],
+    "bom_dia": ["bom dia"],
+    "boa_noite": ["boa noite"],
+    "boa_tarde": ["boa tarde"],
+    "teste": ["teste 1", "teste 2"]
+  },
+  "output": {
+    "eae": ["Eaeee!", "Eae mano!", "Eae mano, beleza?"],
+    "saudacao": ["Eae mano", "Oi, tudo bem?", "Olá, tudo bem?", "Olar"],
+    "despedida": [
+      "Até mais, volte sempre! :)",
+      "Tchau, volte sempre! :)",
+      "Até um outro dia! :)"
+    ],
+    "bom_dia": ["Bom dia!"],
+    "boa_noite": ["boa noite bruno", "Boa noite!"],
+    "boa_tarde": ["Boa tarde!"],
+    "teste": ["out 1; Out 2"]
+  }
+}

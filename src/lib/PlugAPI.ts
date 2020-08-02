@@ -80,6 +80,7 @@ export interface PlugMedia {
 
 declare global {
   interface Window {
+    dump?: (data) => void,
     API: {
       BAN: typeof BAN;
       ROLE: typeof ROLE;

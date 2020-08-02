@@ -9,8 +9,10 @@ import { DadoGame } from './modules/game/games/dado';
 import { RoletaGame } from './modules/game/games/roleta';
 import { StaffModule } from './modules/staff';
 import { SubirGame } from './modules/game/games/subir';
+import { ChatBot } from './modules/chatbot';
 
 const bot = new Bot()
+  .add(ChatBot)
   .add(UtilModule)
   .add(PutariasModule)
   .add(StaffModule)
